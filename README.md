@@ -1,2 +1,11 @@
-# birthday-aureliee
-A special birthday surprise website for Aureliee featuring animations, music, memories, and heartfelt messages.
+# 🎁 Birthday Surprise for Aureliee ✨
+
+A special birthday surprise website crafted with animations, music, memories, and heartfelt messages.
+
+## 🌟 Features
+* 🎵 **Background Music:** Playlist spesial buat ngebangun suasana.
+* 📸 **Memory Gallery:** Kumpulan foto-foto momen kebersamaan.
+* 🎉 **Interactive Animations:** Efek *confetti* dan animasi yang *smooth*.
+
+## 🚀 Tech Stack
+* HTML, CSS, JavaScript

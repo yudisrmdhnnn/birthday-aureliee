@@ -1,6 +1,6 @@
 # 🎁 Birthday Surprise for Aureliee ✨
 
-A special birthday surprise website crafted with animations, music, memories, and heartfelt messages.
+a special birthday surprise website crafted with animations, music, memories, and heartfelt messages.
 
 ## 🌟 Features
 * 🎵 **Background Music:** Playlist spesial buat ngebangun suasana.

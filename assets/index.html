@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Untuk Kamu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Caveat:wght@500;700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plum: #2b1b2e;
+    --plum-deep: #1a0f1c;
+    --blush: #e8b4bc;
+    --cream: #faf3e8;
+    --gold: #faf3e8;
+    --berry: #8c4a5c;
+    --ink: #3a2833;
+  }
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background: #1a0f1c;
+    color: var(--ink);
+    font-family: 'Jost', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    text-transform: lowercase;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  }
+
+  /* ---------- APP SHELL (phone-card on desktop, full-bleed on mobile) ---------- */
+  .app-shell{
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    background: var(--plum-deep);
+  }
+  @media (min-width: 720px) and (min-height: 700px){
+    body{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 16px;
+      background:
+        radial-gradient(ellipse at 50% 25%, rgba(140,74,92,0.28), transparent 60%),
+        #1a0f1c;
+    }
+    .app-shell{
+      width: 420px;
+      height: 860px;
+      max-height: 92vh;
+      border-radius: 34px;
+      box-shadow: 0 50px 120px rgba(0,0,0,0.65), 0 0 0 8px rgba(255,255,255,0.03);
+    }
+  }
+
+  /* ---------- VIEW SYSTEM ---------- */
+  .view{
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    overflow-y: auto;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(232,180,188,0.16), transparent 55%),
+      linear-gradient(180deg, var(--plum-deep), var(--plum) 45%, var(--plum-deep));
+    padding: 70px 20px 60px;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .view.active{
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .stars{ position:absolute; inset:0; overflow:hidden; pointer-events:none; }
+  .stars span{
+    position:absolute; width:3px; height:3px;
+    background: var(--blush); border-radius:50%; opacity:.5;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:.15;} 50%{opacity:.7;} }
+
+  .topbar{
+    position: absolute;
+    top: 0; left:0; right:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 20px;
+    z-index: 30;
+    pointer-events: none;
+    transition: transform .3s ease, opacity .3s ease;
+  }
+  .topbar.topbar-hidden{
+    transform: translateY(-130%);
+    opacity: 0;
+  }
+  .topbar > *{ pointer-events: auto; }
+  .topbar-left{ display:flex; align-items:center; gap: 8px; }
+  .back-btn{
+    display:none;
+    align-items:center; gap:6px;
+    background: rgba(250,243,232,0.08);
+    border: 1px solid rgba(250,243,232,0.3);
+    color: var(--blush);
+    font-family:'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+    padding: 8px 14px;
+    border-radius: 30px;
+    cursor:pointer;
+    backdrop-filter: blur(6px);
+  }
+  .back-btn.show{ display:flex; }
+  .mute-btn{
+    width: 34px; height: 34px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(250,243,232,0.08);
+    border: 1px solid rgba(250,243,232,0.3);
+    border-radius: 50%;
+    font-size: 13px;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+  }
+  .brand{
+    font-family:'Caveat', cursive;
+    color: var(--gold);
+    font-size: 20px;
+  }
+
+
+  .eyebrow{
+    font-size: 11px; letter-spacing: 0.35em; text-transform: lowercase;
+    color: var(--gold); text-align:center; margin-bottom: 12px;
+  }
+  .heading{
+    font-family:'Caveat', cursive;
+    font-size: clamp(36px, 8vw, 52px);
+    color: var(--cream); text-align:center; line-height:1.05;
+  }
+  .heading .name{ color: var(--blush); }
+  .lede{
+    text-align:center; color: rgba(250,243,232,0.55);
+    font-size: 13px; max-width: 420px; margin: 10px auto 0; line-height:1.6;
+  }
+
+  /* ---------- COVER ---------- */
+  #view-cover{ display:flex; align-items:center; justify-content:center; padding:0; }
+  .cover-inner{
+    position:relative; width:100%; max-width: 420px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height: 100%; padding: 40px 20px;
+  }
+  .press-text{
+    margin-bottom: 30px;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: clamp(44px, 11vw, 60px);
+    color: var(--cream);
+    letter-spacing: 0.02em;
+    text-align: center;
+    line-height: 1;
+    cursor: pointer;
+    animation: textSway 3.4s ease-in-out infinite;
+  }
+  @keyframes textSway{
+    0%,100%{ transform: rotate(-2deg) translateY(0); }
+    50%{ transform: rotate(1deg) translateY(-6px); }
+  }
+  .press-sub{
+    margin-top: 26px;
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: lowercase;
+    color: var(--gold);
+    opacity: 0.75;
+    text-align: center;
+    cursor: pointer;
+    animation: bob 2.2s ease-in-out infinite;
+  }
+
+  .envelope-stage{
+    position: relative;
+    width: 300px; height: 204px;
+    margin: 0 auto;
+  }
+
+  .envelope-wrap{
+    position: relative; width: 100%; height: 100%;
+    cursor: pointer; perspective: 1200px; z-index: 5;
+  }
+  .envelope-wrap.no-anim,
+  .envelope-wrap.no-anim .flap,
+  .envelope-wrap.no-anim .seal,
+  .envelope-wrap.no-anim .letter-peek{
+    transition: none !important;
+  }
+  .envelope-body{
+    position:absolute; inset:0;
+    background: linear-gradient(160deg, #f3e4d0, #e6d2b8);
+    border-radius:4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+  .envelope-body::before{
+    content:''; position:absolute; inset:0;
+    background:
+      linear-gradient(155deg, transparent 49.3%, rgba(0,0,0,0.08) 50%, transparent 50.7%),
+      linear-gradient(205deg, transparent 49.3%, rgba(0,0,0,0.08) 50%, transparent 50.7%);
+  }
+  .flap{
+    position:absolute; top:0; left:0; right:0; height: 106px;
+    background: linear-gradient(150deg, #ead9bf, #d9c19c);
+    clip-path: polygon(0 0, 100% 0, 50% 88%);
+    transform-origin: top center;
+    transition: transform 1.9s cubic-bezier(.6,.1,.3,1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    z-index: 5;
+  }
+  .envelope-wrap.open .flap{ transform: rotateX(180deg); z-index:1; }
+  .seal{
+    position:absolute; top: 72px; left:50%; transform: translate(-50%,-50%);
+    width: 52px; height: 52px;
+    clip-path: url(#heartClip); -webkit-clip-path: url(#heartClip);
+    background: radial-gradient(circle at 35% 30%, #a85a63, var(--berry) 70%);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--cream); font-family:'Caveat', cursive; font-size:26px; z-index:6;
+    transition: transform .25s ease, opacity .5s ease;
+  }
+  .envelope-wrap:active .seal{ transform: translate(-50%,-50%) scale(0.9); }
+  .envelope-wrap.open .seal{ opacity:0; transform: translate(-50%,-50%) scale(0.4) rotate(20deg); }
+  .letter-peek{
+    position:absolute; left:8%; right:8%; bottom:6px; height:80%;
+    background: var(--cream); border-radius: 3px 3px 0 0;
+    transition: transform 1.9s cubic-bezier(.6,.1,.3,1) .4s; z-index:3;
+  }
+  .envelope-wrap.open .letter-peek{ transform: translateY(-74px); }
+
+  .surprise-btn{
+    background: linear-gradient(90deg, var(--berry), var(--plum));
+    color: var(--cream);
+    border: none;
+    padding: 15px 38px;
+    border-radius: 40px;
+    font-family:'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: lowercase;
+    cursor: pointer;
+    box-shadow: 0 12px 30px rgba(140,74,92,0.45);
+    animation: bob 2.2s ease-in-out infinite;
+  }
+  @keyframes bob{ 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
+
+  /* ---------- REVEAL ---------- */
+  #view-reveal{ display:flex; flex-direction:column; align-items:center; justify-content:flex-start; }
+  .reveal-stage{ max-width: 400px; width:100%; margin: 0 auto; position:relative; }
+
+  .deco-heart{
+    position: absolute;
+    clip-path: url(#heartClip); -webkit-clip-path: url(#heartClip);
+    background: linear-gradient(135deg, var(--gold), var(--berry));
+    opacity: 0.55;
+    animation: floaty 5s ease-in-out infinite;
+    z-index: 1;
+  }
+  .deco-heart.d1{ width: 26px; height: 26px; top: 0; left: 4%; transform: rotate(-12deg); animation-delay: 0s; }
+  .deco-heart.d2{ width: 20px; height: 20px; top: 42%; right: 0; transform: rotate(10deg); animation-delay: .7s; }
+  .deco-heart.d3{ width: 22px; height: 22px; bottom: 6%; left: -2%; transform: rotate(8deg); animation-delay: 1.4s; }
+  @keyframes floaty{ 0%,100%{ transform: translateY(0) rotate(var(--r,0deg)); } 50%{ transform: translateY(-8px) rotate(var(--r,0deg)); } }
+
+  .reveal-top-row{
+    display:flex; align-items:center; justify-content:center;
+    position: relative; z-index: 3; margin-bottom: -16px;
+  }
+  .corner-deco{
+    position: absolute; top: -8px; left: 0;
+    width: 110px; height: 78px;
+    z-index: 4; pointer-events: none;
+  }
+  .corner-deco span{
+    position: absolute;
+    font-family: 'Jost', sans-serif;
+  }
+  .cd-star1{ top: 2px; left: 10px; font-size: 13px; color: var(--blush); opacity: .8; }
+  .cd-star2{ top: 34px; left: 46px; font-size: 9px; color: var(--gold); opacity: .7; }
+  .cd-star3{ top: 16px; left: 66px; font-size: 11px; color: var(--blush); opacity: .6; }
+  .cd-flower{ top: 4px; left: 32px; font-size: 17px; color: var(--gold); opacity: .85; }
+  .cd-heart{
+    position: absolute; top: 44px; left: 6px;
+    width: 13px; height: 13px;
+    clip-path: url(#heartClip); -webkit-clip-path: url(#heartClip);
+    background: var(--berry); opacity: .7;
+  }
+  .reveal-orn{
+    position: absolute; pointer-events: none; z-index: 1;
+    animation: floaty 6s ease-in-out infinite;
+  }
+  .orn-butterfly1{ top: 4%; right: 4%; font-size: 26px; opacity: .75; --r: -10deg; }
+  .orn-butterfly2{ bottom: 12%; left: 1%; font-size: 20px; opacity: .6; --r: 12deg; animation-delay: 1.2s; }
+  .orn-flower1{ bottom: 4%; right: 8%; font-size: 20px; color: var(--gold); opacity: .7; animation-delay: .6s; }
+  .orn-flower2{ top: 46%; left: -2%; font-size: 16px; color: var(--blush); opacity: .6; animation-delay: 1.8s; }
+  .orn-star1{ top: 34%; right: -1%; font-size: 13px; color: var(--gold); opacity: .65; animation-delay: .3s; }
+  .heart-frame{
+    width: 156px; height: 156px; flex-shrink:0;
+    clip-path: url(#heartClip); -webkit-clip-path: url(#heartClip);
+    background:
+      radial-gradient(circle at 6px 6px, rgba(140,74,92,0.45) 2px, transparent 2.3px),
+      var(--cream);
+    background-size: 12px 12px;
+    padding: 9px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.45);
+    position: relative;
+  }
+  .heart-frame::after{
+    content:'✿'; position:absolute; top:-6px; right:6px;
+    font-size: 15px; color: var(--gold); opacity:.85; z-index:2;
+  }
+  .heart-photo{
+    width: 100%; height: 100%;
+    clip-path: url(#heartClip); -webkit-clip-path: url(#heartClip);
+    background: linear-gradient(135deg, var(--berry), var(--plum));
+    display:flex; align-items:flex-end; justify-content:center;
+  }
+  .heart-photo .ph{ color: rgba(250,243,232,0.5); font-size: 9px; text-align:center; padding: 0 18px 22px; }
+
+  .reveal-envelope-stage{
+    position: relative; width: 260px; height: 188px;
+    margin: 0 auto; z-index: 2;
+  }
+  .reveal-envelope-stage .flap{ height: 96px; }
+  .reveal-envelope-stage .seal{ display:none; }
+  .reveal-envelope-stage .letter-peek{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 10px 14px; text-align:center;
+  }
+  .reveal-envelope-stage .envelope-wrap.open .letter-peek{ transform: translateY(-64px); }
+  .hb-title{ font-family:'Caveat', cursive; font-size: 28px; color: var(--berry); line-height:1.1; }
+  .hb-name{
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size: 14px; color: var(--ink); opacity: .8;
+    margin-top: 4px; line-height: 1.3;
+  }
+  .hb-date{ font-family:'Jost', sans-serif; font-size: 11px; letter-spacing:0.15em; color: var(--ink); opacity:.65; margin-top: 6px; }
+
+  .reveal-bottom-row{
+    display:flex; align-items:flex-end; justify-content:center; gap: 16px;
+    margin-top: 16px; position:relative; z-index:2;
+  }
+  .strip-photo{
+    background:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><path d='M15 23c0 0-8-4.8-8-10.6 0-2.8 2.3-4.8 4.8-4.8 1.4 0 2.6 0.8 3.2 1.9 0.6-1.1 1.8-1.9 3.2-1.9 2.5 0 4.8 2 4.8 4.8 0 5.8-8 10.6-8 10.6z' fill='%238c4a5c' fill-opacity='0.16'/><circle cx='25' cy='6' r='1.6' fill='%23faf3e8' fill-opacity='0.55'/></svg>") repeat,
+      var(--cream);
+    background-size: 30px 30px, auto;
+    box-shadow: 0 16px 30px rgba(0,0,0,0.45), inset 0 0 0 2px rgba(140,74,92,0.22);
+    padding: 10px 10px 12px;
+    display:flex; flex-direction:column; gap: 6px;
+    transform: rotate(5deg);
+    position: relative;
+  }
+  .strip-photo::before{
+    content:''; position:absolute; top:-9px; left: 18px;
+    width: 46px; height: 18px;
+    background: rgba(232,180,188,0.6);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    transform: rotate(-8deg);
+  }
+  .strip-photo::after{
+    content:'✦'; position:absolute; top:-16px; right:-8px;
+    font-size: 14px; color: var(--gold); opacity:.9;
+  }
+  .strip-shot{
+    width: 108px; height: 82px;
+    background: linear-gradient(135deg, var(--berry), var(--plum));
+    position: relative;
+  }
+  .strip-shot::after{
+    content: '♡';
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; color: rgba(250,243,232,0.25);
+    pointer-events: none;
+  }
+  .strip-shot.has-photo::after{ display: none; }
+  .strip-shot .ph{
+    width:100%; height:100%;
+    background: linear-gradient(135deg, var(--plum), var(--berry));
+    display:flex; align-items:center; justify-content:center;
+    color: rgba(250,243,232,0.4); font-size: 9px;
+  }
+  .strip-label{ text-align:center; font-family:'Caveat', cursive; font-size: 16px; color: var(--berry); margin-top: 2px; }
+
+  .square-photo{
+    width: 174px; height: 174px;
+    background:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30'><path d='M15 23c0 0-8-4.8-8-10.6 0-2.8 2.3-4.8 4.8-4.8 1.4 0 2.6 0.8 3.2 1.9 0.6-1.1 1.8-1.9 3.2-1.9 2.5 0 4.8 2 4.8 4.8 0 5.8-8 10.6-8 10.6z' fill='%238c4a5c' fill-opacity='0.16'/><circle cx='25' cy='6' r='1.6' fill='%23faf3e8' fill-opacity='0.55'/></svg>") repeat,
+      var(--cream);
+    background-size: 30px 30px, auto;
+    box-shadow: 0 16px 30px rgba(0,0,0,0.45), inset 0 0 0 2px rgba(140,74,92,0.22);
+    padding: 10px 10px 26px;
+    transform: rotate(-6deg);
+    position: relative;
+  }
+  .square-photo::before{
+    content:''; position:absolute; top:-9px; right: 22px;
+    width: 44px; height: 18px;
+    background: rgba(250,243,232,0.55);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    transform: rotate(6deg);
+  }
+  .square-photo::after{
+    content:'♡'; position:absolute; bottom:-4px; left:-6px;
+    font-size: 15px; color: var(--berry); opacity:.75;
+  }
+  .square-label{
+    position:absolute; left:0; right:0; bottom:6px;
+    text-align:center; font-family:'Caveat', cursive;
+    font-size: 15px; color: var(--berry);
+  }
+  .square-photo .ph{
+    width:100%; height:100%;
+    background: linear-gradient(135deg, var(--berry), var(--plum));
+    display:flex; align-items:center; justify-content:center;
+    color: rgba(250,243,232,0.5); font-size: 10px; text-align:center; padding:6px;
+  }
+
+  .continue-wrap{ text-align:center; margin-top: 22px; position:relative; z-index:2; }
+
+  /* ---------- MENU ---------- */
+  .menu-grid{
+    max-width: 420px; margin: 40px auto 0;
+    display:grid; grid-template-columns: 1fr 1fr; gap: 18px;
+  }
+  .menu-card{
+    background: linear-gradient(160deg, rgba(250,243,232,0.06), rgba(250,243,232,0.02));
+    border: 1px solid rgba(250,243,232,0.25);
+    border-radius: 18px;
+    padding: 28px 16px;
+    text-align:center;
+    cursor:pointer;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+    transition: transform .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .menu-card:hover{
+    transform: translateY(-5px);
+    background: rgba(250,243,232,0.09);
+    border-color: rgba(250,243,232,0.5);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.35);
+  }
+  .menu-icon{ font-size: 26px; margin-bottom: 10px; display:block; }
+  .menu-label{ font-family:'Caveat', cursive; font-size: 24px; color: var(--cream); }
+  .menu-card.wide{ grid-column: 1 / -1; padding: 22px 16px; }
+  .menu-card.wide .menu-icon{ margin-bottom: 6px; }
+  .menu-card.centered{
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - 9px);
+  }
+  .menu-card.with-love{
+    background: linear-gradient(160deg, rgba(140,74,92,0.22), rgba(43,27,46,0.4));
+    border: 1px solid rgba(250,243,232,0.35);
+    box-shadow: 0 16px 40px rgba(140,74,92,0.5), 0 0 30px rgba(232,180,188,0.12);
+  }
+  .menu-card.with-love:hover{
+    border-color: rgba(250,243,232,0.55);
+    box-shadow: 0 20px 46px rgba(140,74,92,0.6), 0 0 36px rgba(232,180,188,0.18);
+  }
+  .menu-card.with-love .menu-label{ color: var(--cream); }
+
+  /* ---------- JOURNEY ---------- */
+  .together-badge{
+    max-width: 480px; margin: 26px auto 0; text-align:center;
+  }
+  .together-badge .num{
+    font-family:'Caveat', cursive; font-size: 30px; color: var(--blush);
+  }
+  .together-badge .lbl{
+    font-size: 10px; letter-spacing:0.2em; color: rgba(250,243,232,0.45); margin-top: 4px;
+  }
+  .timeline{ max-width: 480px; margin: 34px auto 0; position:relative; padding-left: 30px; }
+  .timeline::before{
+    content:''; position:absolute; left: 7px; top:6px; bottom:6px; width:3px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--gold), rgba(250,243,232,0.15));
+  }
+  .tl-item{ position: relative; margin-bottom: 22px; }
+  .tl-item::before{
+    content:''; position:absolute; left: -30px; top: 2px;
+    width: 16px; height:16px; border-radius:50%;
+    background: var(--gold); box-shadow: 0 0 0 5px rgba(250,243,232,0.18);
+    transition: background .25s ease;
+  }
+  .tl-item.open::before{ background: var(--blush); }
+  .tl-date{ font-size: 10px; letter-spacing:0.15em; text-transform:lowercase; color: var(--gold); margin-bottom: 4px; }
+  .tl-header{
+    display:flex; align-items:center; justify-content:space-between; gap: 10px;
+    cursor: pointer; padding: 4px 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tl-title{ font-family:'Caveat', cursive; font-size: 26px; color: var(--cream); }
+  .tl-arrow{
+    flex-shrink:0; width: 26px; height: 26px; border-radius:50%;
+    border: 1px solid rgba(250,243,232,0.3);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--gold); font-size: 12px;
+    transition: transform .35s ease, background .25s ease;
+  }
+  .tl-item.open .tl-arrow{ transform: rotate(180deg); background: rgba(250,243,232,0.12); }
+  .tl-collapse{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .45s ease;
+  }
+  .tl-item.open .tl-collapse{ grid-template-rows: 1fr; }
+  .tl-collapse-inner{ overflow: hidden; }
+  .tl-desc{
+    font-family:'Cormorant Garamond', serif; font-size: 16px;
+    color: rgba(250,243,232,0.88); line-height:1.7; text-align: justify;
+    padding-top: 10px;
+    white-space: pre-line;
+  }
+
+  /* ---------- MOMENT (camera carousel) ---------- */
+  .camera-frame{
+    max-width: 340px; margin: 30px auto 0;
+    position: relative;
+  }
+  .camera-housing{
+    background: linear-gradient(160deg, #eaeaee 0%, #c2c2c8 45%, #93939a 100%);
+    border-radius: 18px;
+    padding: 16px 14px 20px;
+    box-shadow: 0 25px 55px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.5), inset 0 -3px 8px rgba(0,0,0,0.15);
+    position: relative;
+  }
+  .camera-lug{
+    position: absolute; top: -6px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: #120a10;
+    box-shadow: inset 0 0 0 2px rgba(250,243,232,0.3), 0 2px 4px rgba(0,0,0,0.4);
+  }
+  .camera-lug.left{ left: 10px; }
+  .camera-lug.right{ right: 10px; }
+  .camera-topplate{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 0 4px 16px;
+    position: relative;
+  }
+  .camera-brand{
+    position: absolute; left: 50%; top: -2px; transform: translateX(-50%);
+    font-size: 8px; letter-spacing: 0.25em; text-transform: uppercase;
+    color: rgba(250,243,232,0.35); font-family:'Jost', sans-serif;
+  }
+  .camera-dial{
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(160deg, #4a2f42, #241318);
+    box-shadow: inset 0 0 0 2px rgba(250,243,232,0.3), 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .camera-viewfinder-bump{
+    width: 50px; height: 15px;
+    background: linear-gradient(160deg, #241318, #100810);
+    border-radius: 4px;
+    box-shadow: inset 0 0 0 1px rgba(250,243,232,0.15);
+  }
+  .camera-shutter-btn{
+    width: 18px; height: 18px; border-radius: 50%;
+    background: linear-gradient(160deg, var(--gold), var(--berry));
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  }
+  .camera-body{
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 6px),
+      linear-gradient(160deg, #e0e0e4 0%, #b0b0b7 50%, #86868d 100%);
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: inset 0 3px 10px rgba(0,0,0,0.25), inset 0 -2px 6px rgba(0,0,0,0.2), 0 1px 0 rgba(255,255,255,0.4);
+  }
+  .camera-lens-ring{
+    width: 100%; border-radius: 16px;
+    background: linear-gradient(160deg, #e6e6ea 0%, #b8b8bf 45%, #8c8c93 100%);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.6), inset 0 -2px 4px rgba(0,0,0,0.25);
+    padding: 6px;
+    position: relative;
+  }
+  .lens-screw{
+    position: absolute;
+    width: 7px; height: 7px; border-radius: 50%;
+    background: linear-gradient(160deg, #f2f2f4, #9a9aa0);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5), 0 1px 2px rgba(0,0,0,0.4);
+    z-index: 2;
+  }
+  .lens-screw.tl{ top: 10%; left: 10%; }
+  .lens-screw.tr{ top: 10%; right: 10%; }
+  .lens-screw.bl{ bottom: 10%; left: 10%; }
+  .lens-screw.br{ bottom: 10%; right: 10%; }
+  .camera-lens{
+    width: 100%; aspect-ratio: 1/1; border-radius: 13px;
+    background: linear-gradient(135deg, var(--berry), var(--plum));
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: inset 0 0 0 4px rgba(0,0,0,0.3);
+    overflow:hidden;
+    cursor: pointer;
+    position: relative;
+  }
+  .camera-lens::before{
+    content:''; position:absolute; inset: 12px;
+    border-radius: 8px; border: 2px solid rgba(250,243,232,0.15);
+    pointer-events: none;
+  }
+  .camera-lens::after{
+    content:''; position:absolute; top: 10%; left: 12%;
+    width: 22px; height: 12px;
+    background: rgba(255,255,255,0.28);
+    border-radius: 50%; filter: blur(3px);
+    pointer-events: none;
+  }
+  .camera-lens .photo-label{ color: rgba(250,243,232,0.55); font-size: 11px; text-align:center; padding:18px; }
+  .camera-caption-card{
+    background: linear-gradient(160deg, rgba(250,243,232,0.07), rgba(250,243,232,0.02));
+    border: 1px solid rgba(250,243,232,0.18);
+    border-radius: 16px;
+    padding: 16px 18px;
+    margin-top: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  }
+  .camera-caption{
+    text-align:center; font-family:'Caveat', cursive; font-size: 21px;
+    color: var(--cream); margin-top: 0; min-height: 26px;
+  }
+  .camera-desc{
+    text-align:center; font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size: 14px; line-height: 1.6; color: rgba(250,243,232,0.55);
+    max-width: 260px; margin: 6px auto 0; min-height: 22px;
+  }
+  .camera-nav{
+    display:flex; align-items:center; justify-content:space-between; margin-top: 14px;
+  }
+  .camera-arrow{
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(250,243,232,0.08); border: 1px solid rgba(250,243,232,0.3);
+    color: var(--gold); font-size: 16px; cursor: pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition: background .2s ease;
+  }
+  .camera-arrow:hover{ background: rgba(250,243,232,0.15); }
+  .camera-dots{ display:flex; align-items:center; gap: 6px; }
+  .camera-dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(250,243,232,0.25);
+    transition: all .25s ease;
+  }
+  .camera-dot.active{ background: var(--gold); width: 16px; border-radius: 4px; }
+
+  .lightbox{
+    position: absolute; inset: 0; z-index: 100;
+    background: rgba(13,7,16,0.88);
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 24px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .lightbox.show{ opacity: 1; pointer-events: auto; }
+  .lightbox-card{
+    background: var(--cream); padding: 14px 14px 34px;
+    max-width: 320px; width: 100%;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+    transform: scale(0.85); transition: transform .3s ease;
+  }
+  .lightbox.show .lightbox-card{ transform: scale(1); }
+  .lightbox-photo{
+    width:100%; aspect-ratio:1/1;
+    background: linear-gradient(135deg, var(--berry), var(--plum));
+    display:flex; align-items:center; justify-content:center;
+    color: rgba(250,243,232,0.5); font-size: 13px; text-align:center; padding:10px;
+  }
+  .lightbox-cap{ font-family:'Caveat', cursive; font-size: 22px; color: var(--ink); text-align:center; margin-top:12px; }
+
+  /* ---------- PLAYLIST ---------- */
+  .playlist{ max-width: 480px; margin: 30px auto 0; display:flex; flex-direction:column; gap: 12px; }
+  .track{
+    display:flex; align-items:center; gap: 14px;
+    background: linear-gradient(160deg, #3a2436, #23151f);
+    border-radius: 14px; padding: 14px 16px;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.4), inset 0 0 0 1px rgba(250,243,232,0.15);
+    transition: background .3s ease, box-shadow .3s ease;
+  }
+  .track.playing{
+    background: linear-gradient(160deg, #4d2c46, #2a1522);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(250,243,232,0.4);
+  }
+  .track-num{ font-family:'Cormorant Garamond', serif; font-style:italic; color: var(--gold); font-size: 15px; width: 20px; flex-shrink:0; }
+  .track-info{ flex:1; min-width:0; }
+  .track-title{ font-family:'Cormorant Garamond', serif; font-style:italic; color: var(--cream); font-size:16px; }
+  .track-artist{ font-size: 11px; color: var(--blush); opacity:.7; margin-top:2px; }
+  .track-desc{
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size: 12px; color: rgba(250,243,232,0.45); margin-top: 4px; line-height:1.4;
+  }
+  .track-progress{
+    position: relative;
+    height: 3px; background: rgba(250,243,232,0.12); border-radius: 2px;
+    background-clip: content-box;
+    padding: 10px 0; margin-top: 4px; box-sizing: content-box;
+    cursor: pointer; touch-action: none;
+  }
+  .track-progress-fill{
+    position:absolute; top:50%; left:0; transform:translateY(-50%);
+    height:3px; width:0%; background: var(--gold); border-radius:2px; pointer-events:none;
+  }
+  .track-progress-thumb{
+    position:absolute; top:50%; left:0%; width:10px; height:10px; border-radius:50%;
+    background: var(--gold); transform:translate(-50%,-50%);
+    box-shadow: 0 0 0 4px rgba(250,243,232,0.22);
+    opacity:0; transition: opacity .15s ease; pointer-events:none;
+  }
+  .track-progress:hover .track-progress-thumb,
+  .track-progress.dragging .track-progress-thumb{ opacity:1; }
+  .track-progress-tooltip{
+    position:absolute; bottom: 16px; left:0%; transform:translateX(-50%);
+    background: var(--berry); color: #ffffff; font-size:10px;
+    padding: 3px 7px; border-radius:5px; white-space:nowrap;
+    opacity:0; pointer-events:none; transition: opacity .1s ease;
+    font-variant-numeric: tabular-nums; box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+  }
+  .track-progress.dragging .track-progress-tooltip{ opacity:1; }
+  .track-time{
+    font-size: 10px; color: rgba(250,243,232,0.4); flex-shrink:0;
+    width: 34px; text-align:right; font-variant-numeric: tabular-nums;
+  }
+  .track-play{
+    width:36px; height:36px; border-radius:50%;
+    border: 1px solid var(--gold); background:transparent; color: var(--gold);
+    font-size:13px; cursor:pointer; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    transition: background .2s ease;
+  }
+  .track-play:hover{ background: rgba(250,243,232,0.15); }
+  .track.playing .track-play{ background: var(--gold); color: var(--plum-deep); }
+  .playlist-section{
+    font-size: 10px; letter-spacing: 0.25em; text-transform: lowercase;
+    color: var(--gold); opacity: .75; margin: 26px 4px 8px;
+  }
+  .playlist-section:first-of-type{ margin-top: 4px; }
+
+  /* ---------- GIFT ---------- */
+  .letter-card{
+    max-width: 480px; margin: 30px auto 0;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 1px, transparent 1px, transparent 3px),
+      var(--cream);
+    border-radius:6px; padding: 38px 30px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.45), inset 0 0 40px rgba(140,74,92,0.06);
+    position:relative; transform: rotate(-0.4deg);
+    opacity: 0; transform: translateY(-18px) rotate(-0.4deg);
+  }
+  #view-gift.active .letter-card{
+    animation: letterDrop .8s ease forwards;
+  }
+  @keyframes letterDrop{
+    from{ opacity:0; transform: translateY(-18px) rotate(-0.4deg); }
+    to{ opacity:1; transform: translateY(0) rotate(-0.4deg); }
+  }
+  .letter-card::after{
+    content:''; position:absolute; top:-10px; right:22px; width:64px; height:24px;
+    background: rgba(250,243,232,0.35); transform: rotate(4deg);
+  }
+  .letter-text{ font-family:'Cormorant Garamond', serif; font-weight: 600; font-size: 20px; line-height:1.75; color: #2b1b2e; white-space: pre-line; }
+  .letter-sign{ font-family:'Caveat', cursive; font-size: 28px; color: var(--berry); text-align:right; margin-top:16px; }
+
+  .gift-photo-tag{
+    width: 78px; height: 78px;
+    margin: 14px auto 0;
+    border-radius: 50%;
+    background: var(--cream);
+    padding: 4px;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.4), 0 0 0 1px rgba(140,74,92,0.25);
+    transform: rotate(-6deg);
+  }
+  .gift-photo-tag .gpt-img{
+    width:100%; height:100%; border-radius:50%;
+    background: linear-gradient(135deg, var(--berry), var(--plum));
+  }
+
+  .voice-note{
+    max-width: 480px; margin: 20px auto 0;
+    background: var(--cream);
+    border-radius: 14px;
+    padding: 16px 18px;
+    display:flex; flex-direction: column; gap: 10px;
+    box-shadow: 0 16px 30px rgba(0,0,0,0.35);
+    transform: rotate(0.6deg);
+  }
+  .voice-note-top{ display:flex; align-items:center; gap: 10px; }
+  .voice-note-icon{ font-size: 18px; flex-shrink:0; }
+  .voice-note-label{
+    font-family:'Caveat', cursive; font-size: 17px; color: var(--berry);
+    line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .voice-note-bottom{ display:flex; align-items:center; gap: 12px; }
+  .voice-note-info{ flex:1; min-width:0; }
+  .voice-note-progress{
+    position: relative;
+    height: 3px; background: rgba(43,27,46,0.12); border-radius: 2px;
+    background-clip: content-box;
+    padding: 10px 0; box-sizing: content-box;
+    cursor: pointer; touch-action: none;
+  }
+  .voice-note-progress-fill{
+    position:absolute; top:50%; left:0; transform:translateY(-50%);
+    height:3px; width:0%; background: var(--berry); border-radius:2px; pointer-events:none;
+  }
+  .voice-note-progress-thumb{
+    position:absolute; top:50%; left:0%; width:10px; height:10px; border-radius:50%;
+    background: var(--berry); transform:translate(-50%,-50%);
+    box-shadow: 0 0 0 4px rgba(140,74,92,0.2);
+    opacity:0; transition: opacity .15s ease; pointer-events:none;
+  }
+  .voice-note-progress:hover .voice-note-progress-thumb,
+  .voice-note-progress.dragging .voice-note-progress-thumb{ opacity:1; }
+  .voice-note-progress-tooltip{
+    position:absolute; bottom: 16px; left:0%; transform:translateX(-50%);
+    background: var(--ink); color: var(--cream); font-size:10px;
+    padding: 3px 7px; border-radius:5px; white-space:nowrap;
+    opacity:0; pointer-events:none; transition: opacity .1s ease;
+    font-variant-numeric: tabular-nums; box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  .voice-note-progress.dragging .voice-note-progress-tooltip{ opacity:1; }
+  .voice-note-time{ font-size: 10px; color: var(--ink); opacity:.5; margin-top: 4px; }
+  .voice-note-play{
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--berry); background: transparent; color: var(--berry);
+    font-size: 13px; cursor: pointer; flex-shrink: 0;
+    display:flex; align-items:center; justify-content:center;
+    transition: background .2s ease, color .2s ease;
+  }
+  .voice-note-play:hover{ background: rgba(140,74,92,0.1); }
+  .voice-note-play.playing{ background: var(--berry); color: var(--cream); }
+
+  .gift-footer{ text-align:center; color: var(--blush); font-family:'Caveat', cursive; font-size:22px; opacity:.85; margin-top: 30px; }
+
+  /* ---------- OUR FILM ---------- */
+  .film-card{
+    width: calc(100% + 40px);
+    margin: 30px -20px 0;
+    background: linear-gradient(160deg, #33202e, #1c1220);
+    border-radius: 0;
+    padding: 6px;
+    box-shadow: 0 25px 55px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(250,243,232,0.1);
+  }
+  .film-frame{
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+  #view-film{ display:flex; flex-direction:column; justify-content:center; position:relative; overflow-x:hidden; }
+  .film-orn{
+    position:absolute; pointer-events:none; z-index:0;
+    color: var(--gold);
+    animation: floaty 6s ease-in-out infinite;
+  }
+  .film-orn-1{ top: 78px; left: 5%; font-size: 20px; opacity:.55; }
+  .film-orn-2{ top: 130px; right: 6%; font-size: 24px; opacity:.6; animation-delay: 1s; }
+  .film-orn-3{ top: 210px; right: 12%; font-size: 13px; color: var(--blush); opacity:.55; animation-delay: .5s; }
+  .film-orn-4{ top: 60px; right: 22%; font-size: 11px; opacity:.5; animation-delay: 1.6s; }
+  .film-frame video{
+    display:block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: center;
+    background:#000;
+  }
+  .film-caption{
+    text-align:center; font-family:'Caveat', cursive; font-size: 20px;
+    color: var(--cream); margin-top: 14px; opacity:.85;
+  }
+
+  /* ---------- CLOSING ---------- */
+  #view-closing{ display:flex; flex-direction:column; align-items:center; justify-content:flex-start; overflow:hidden; }
+  .confetti-wrap{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+  .confetti-piece{
+    position:absolute; top:-24px; border-radius:2px;
+    animation: confettiFall linear infinite;
+  }
+  @keyframes confettiFall{
+    0%{ transform: translateY(-24px) rotate(0deg); opacity:0; }
+    8%{ opacity:1; }
+    100%{ transform: translateY(720px) rotate(360deg); opacity:0; }
+  }
+  .closing-content{ position:relative; z-index:1; text-align:center; max-width:380px; padding:0 6px; margin-top: 30px; }
+  .closing-title{
+    font-family:'Caveat', cursive; font-weight:700;
+    font-size: clamp(32px, 8.5vw, 46px); color: var(--cream); line-height:1.15;
+  }
+  .closing-msg{
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size: 17px; color: rgba(250,243,232,0.7); line-height:1.7;
+    margin-top: 18px;
+  }
+  .closing-msg + .closing-msg{ margin-top: 12px; }
+  .closing-credits{
+    margin-top: 34px; padding-top: 22px;
+    border-top: 1px solid rgba(140,74,92,0.2);
+  }
+  .closing-credits .line1{
+    font-size: 10px; letter-spacing: 0.3em; color: rgba(250,243,232,0.5);
+  }
+  .closing-credits .line2{
+    font-family:'Caveat', cursive; font-size: 26px; color: var(--berry); margin-top: 6px;
+  }
+  .closing-credits .line3{
+    font-size: 9px; letter-spacing: 0.03em; color: rgba(250,243,232,0.35); margin-top: 10px;
+    white-space: nowrap;
+  }
+  .restart-btn{
+    margin-top: 32px;
+    background: transparent;
+    border: 1px solid rgba(250,243,232,0.4);
+    color: var(--gold);
+    padding: 13px 30px;
+    border-radius: 40px;
+    font-family:'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: background .2s ease;
+  }
+  .restart-btn:hover{ background: rgba(250,243,232,0.12); }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="back-btn" id="backBtn">‹ kembali</button>
+    <button class="mute-btn" id="muteBtn">🔊</button>
+  </div>
+  <div class="brand" id="brandText" style="visibility:hidden;">specially for you ✿</div>
+</div>
+
+<audio id="bgMusic" loop preload="none">
+  <source src="music/backsound.mp3" type="audio/mpeg">
+</audio>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <clipPath id="heartClip" clipPathUnits="objectBoundingBox">
+      <path d="M0.5,0.94 C0.5,0.94 0.04,0.62 0.04,0.32 C0.04,0.11 0.21,0 0.37,0 C0.46,0 0.5,0.06 0.5,0.13 C0.5,0.06 0.54,0 0.63,0 C0.79,0 0.96,0.11 0.96,0.32 C0.96,0.62 0.5,0.94 0.5,0.94 Z"/>
+    </clipPath>
+  </defs>
+</svg>
+
+<section class="view active" id="view-cover">
+  <div class="stars" id="stars"></div>
+  <div class="cover-inner">
+    <div class="press-text" id="pressText">press the envelope</div>
+
+    <div class="envelope-stage">
+      <div class="envelope-wrap" id="envelope">
+        <div class="flap"></div>
+        <div class="seal"></div>
+        <div class="letter-peek"></div>
+        <div class="envelope-body"></div>
+      </div>
+    </div>
+
+    <div class="press-sub" id="pressSub">tap to continue</div>
+  </div>
+</section>
+
+<section class="view" id="view-reveal">
+  <div class="stars"></div>
+  <div class="reveal-stage">
+    <div class="deco-heart d1"></div>
+    <div class="deco-heart d2"></div>
+    <div class="deco-heart d3"></div>
+    <div class="reveal-orn orn-butterfly1">🦋</div>
+    <div class="reveal-orn orn-butterfly2">🦋</div>
+    <div class="reveal-orn orn-flower1">✿</div>
+    <div class="reveal-orn orn-flower2">✿</div>
+    <div class="reveal-orn orn-star1">✦</div>
+    <div class="reveal-top-row">
+      <div class="corner-deco">
+        <span class="cd-star1">✦</span>
+        <span class="cd-star2">✦</span>
+        <span class="cd-star3">✦</span>
+        <span class="cd-flower">✿</span>
+        <div class="cd-heart"></div>
+      </div>
+      <div class="heart-frame"><div class="heart-photo" style="background:url('photos/foto-love.jpg') center 25%/cover;"></div></div>
+    </div>
+    <div class="reveal-envelope-stage">
+      <div class="envelope-wrap open">
+        <div class="flap"></div>
+        <div class="letter-peek">
+          <div class="hb-title">Happy Birthday</div>
+          <div class="hb-name">Salzabilla Aurelia Maheswari</div>
+          <div class="hb-date">24 . 11 . 2026</div>
+        </div>
+        <div class="envelope-body"></div>
+      </div>
+    </div>
+    <div class="reveal-bottom-row">
+      <div class="strip-photo">
+        <div class="strip-shot has-photo" style="background:url('photos/photobox1.jpg') center/cover, linear-gradient(135deg, var(--berry), var(--plum));"></div>
+        <div class="strip-shot has-photo" style="background:url('photos/photobox2.jpg') center 40%/cover, linear-gradient(135deg, var(--berry), var(--plum));"></div>
+        <div class="strip-shot has-photo" style="background:url('photos/photobox3.jpg') center 60%/cover, linear-gradient(135deg, var(--berry), var(--plum));"></div>
+        <div class="strip-label">photobox</div>
+      </div>
+      <div class="square-photo"><div class="ph" style="background:url('photos/foto-favorite.jpg') center 65%/cover; color:transparent;"></div><div class="square-label">favorite</div></div>
+    </div>
+  </div>
+  <div class="continue-wrap">
+    <button class="surprise-btn" id="continueBtn">Next</button>
+  </div>
+</section>
+
+<section class="view" id="view-menu">
+  <div class="stars"></div>
+  <div class="eyebrow">pilih salah satu</div>
+  <h1 class="heading">for <span class="name">aureliee</span> 🎂</h1>
+  <p class="lede">semua kenangan, cerita, lagu, dan hadiah kecil buat kamu ada di sini.</p>
+
+  <div class="menu-grid">
+    <div class="menu-card" data-target="view-journey">
+      <span class="menu-icon">🛤️</span>
+      <div class="menu-label">journey</div>
+    </div>
+    <div class="menu-card" data-target="view-moment">
+      <span class="menu-icon">📸</span>
+      <div class="menu-label">just you</div>
+    </div>
+    <div class="menu-card" data-target="view-playlist">
+      <span class="menu-icon">🎵</span>
+      <div class="menu-label">playlist</div>
+    </div>
+    <div class="menu-card" data-target="view-gift">
+      <span class="menu-icon">💌</span>
+      <div class="menu-label">words for you</div>
+    </div>
+    <div class="menu-card centered" data-target="view-film">
+      <span class="menu-icon">🎬</span>
+      <div class="menu-label">our film</div>
+    </div>
+    <div class="menu-card wide with-love" data-target="view-closing">
+      <span class="menu-icon">🤍</span>
+      <div class="menu-label">with love</div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-journey">
+  <div class="eyebrow">perjalanan kita</div>
+  <h2 class="heading">journey</h2>
+  <div class="together-badge">
+    <div class="num" id="togetherCount">menghitung...</div>
+    <div class="lbl">sudah bersama</div>
+  </div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-header">
+        <div class="tl-title">pertemuan yang sederhana</div>
+        <div class="tl-arrow">▾</div>
+      </div>
+      <div class="tl-collapse"><div class="tl-collapse-inner">
+      <div class="tl-desc">hai, aku yudis. kalau kamu lagi baca bagian ini, berarti semuanya dimulai dari sini. waktu itu kita sama-sama baru menginjak dunia perkuliahan. masih jadi dua orang asing yang bahkan belum pernah saling ngobrol. aku juga ngga pernah nyangka kalau dari pertemuan sesederhana itu, kita bakal punya cerita sejauh ini.
+
+ngga lama setelah itu, aku dikenalin ke circle yang ternyata di dalamnya ada kamu. dari situlah kita mulai lebih sering ketemu. entah di kelas, pas lagi kumpul bareng, atau sekadar ngobrol setelah kegiatan kampus selesai. waktu itu semuanya terasa biasa aja. kita cuma kenalan, ngobrol seperlunya, lalu pulang seperti hari-hari biasa. ngga ada yang benar-benar terasa istimewa.
+
+makin lama, karena sering ada di lingkungan yang sama, obrolan kita juga mulai bertambah. dari yang awalnya cuma basa-basi, jadi mulai cerita hal-hal random, saling bercanda, sampai kadang ngga sadar ngobrolnya jadi panjang. sedikit demi sedikit, rasa canggung itu mulai hilang dan kita jadi lebih nyaman satu sama lain.
+
+kalau dipikir-pikir lagi, rasanya lucu juga. waktu itu semuanya terasa biasa aja. kita cuma dua orang yang kebetulan dipertemukan di waktu yang sama, lalu saling kenal seperti orang-orang pada umumnya. ngga ada yang benar-benar terasa istimewa. baru sekarang aku sadar, ternyata dari pertemuan yang sesederhana itu, cerita kita pelan-pelan mulai ditulis.</div>
+      </div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-header">
+        <div class="tl-title">cerita yang tumbuh</div>
+        <div class="tl-arrow">▾</div>
+      </div>
+      <div class="tl-collapse"><div class="tl-collapse-inner">
+      <div class="tl-desc">setelah aku jadi bagian dari circle itu, kita jadi lebih sering ketemu. hampir setiap hari selalu ada aja cerita baru. entah habis kelas, pas lagi kumpul, atau sekadar ngobrol tentang hal-hal random. semuanya berjalan seperti biasa. aku cuma ngerasa kita jadi lebih sering ketemu, selebihnya ngga ada yang benar-benar berbeda.
+
+di circle itu, aku juga bukan orang yang paling menonjol. aku lebih sering jadi pendengar, sesekali ikut nimbrung kalau ada yang bisa dibahas, lalu menikmati semuanya dari tempatku sendiri. mungkin karena itu juga, aku ngga pernah kepikiran kalau ternyata ada seseorang yang pelan-pelan mulai memperhatiin aku.
+
+awalnya aku masih nganggep semuanya biasa. sampai akhirnya ada beberapa hal kecil yang bikin aku berhenti buat nganggep semuanya sebagai kebetulan. entah cara kamu ngobrol, perhatian-perhatian kecil yang kamu kasih, atau sesederhana kamu yang sering nyari alasan buat ngobrol sama aku. waktu itu aku belum benar-benar ngerti kenapa, tapi cukup buat bikin aku ikut penasaran.
+
+aku ngga pernah benar-benar tau apa yang ada di pikiran kamu waktu itu. yang aku tau, rasa penasaran itu ternyata pelan-pelan ikut tumbuh di aku. semuanya masih berjalan seperti biasa, tapi tanpa sadar aku mulai menikmati setiap obrolan yang kita punya. dari situ aku mulai sadar, ternyata cerita kita tumbuh bukan dari sesuatu yang besar, melainkan dari hal-hal kecil yang dulu sama sekali ngga pernah kita pikirkan.</div>
+      </div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-header">
+        <div class="tl-title">hari semuanya berubah</div>
+        <div class="tl-arrow">▾</div>
+      </div>
+      <div class="tl-collapse"><div class="tl-collapse-inner">
+      <div class="tl-desc">waktu terus berjalan, dan tanpa terasa kita jadi semakin dekat. sampai akhirnya, di penghujung desember, ada satu obrolan yang sampai sekarang masih aku inget. waktu itu kamu cerita kalau rasa penasaran yang selama ini kamu simpan ternyata pelan-pelan berubah jadi rasa tertarik. jujur, aku cukup kaget. karena selama ini aku cuma ngerasa kita lagi sering ngobrol dan makin akrab. aku ngga pernah kepikiran kalau ternyata kamu nyimpen perasaan itu selama ini.
+
+jujur, waktu itu aku sempat takut. aku pikir setelah obrolan itu semuanya bakal berubah. aku takut kita jadi canggung, atau mungkin malah ngga bisa ngobrol seperti biasanya. tapi ternyata, semua ketakutan itu ngga pernah benar-benar terjadi. kita tetap ngobrol, tetap bercanda, dan tetap saling cerita seperti hari-hari sebelumnya. malah dari situ aku ngerasa kita jadi makin nyaman buat saling terbuka.
+
+di masa itu, kita juga pernah cerita tentang hubungan kita masing-masing. kita sama-sama bilang kalau masih ada sedikit trauma dari cerita yang sebelumnya. mungkin karena itu juga, kita ngga pernah buru-buru. semuanya kita jalanin pelan-pelan, saling kenal lebih jauh, tanpa harus memaksa semuanya berjalan terlalu cepat.
+
+sampai akhirnya, tanggal 15 februari 2025, aku memberanikan diri buat ngajak kamu jadi pacarku. lucunya, kamu malah ngga langsung percaya. mungkin karena cara aku ngajaknya terlalu santai, jadi kamu berkali-kali mastiin kalau aku beneran serius. sejujurnya waktu itu aku sempat gemes sendiri. tapi setelah kamu yakin kalau aku ngga lagi bercanda, hari itu akhirnya jadi awal dari cerita yang sampai sekarang masih terus kita jalanin bersama.
+
+sejak hari itu, kita bukan lagi dua orang yang saling penasaran. kita jadi dua orang yang memilih buat melangkah bareng, dan tanpa terasa, cerita yang dulu dimulai dari sebuah pertemuan sederhana kini benar-benar jadi cerita kita.</div>
+      </div></div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-header">
+        <div class="tl-title">cerita yang masih berlanjut</div>
+        <div class="tl-arrow">▾</div>
+      </div>
+      <div class="tl-collapse"><div class="tl-collapse-inner">
+      <div class="tl-desc">kalau mengingat semuanya dari awal, rasanya masih ngga nyangka kalau pertemuan sederhana di kampus bisa membawa kita sampai di titik ini. dari yang awalnya bahkan belum saling kenal, sampai akhirnya bisa menjalani banyak hal bersama. kalau dipikir-pikir lagi, semuanya memang berjalan dengan cara yang ngga pernah kita duga.
+
+semakin lama aku sadar, ternyata sebuah hubungan bukan tentang ngga pernah salah. ada hari di mana kita beda pendapat, ada waktu di mana kita sama-sama capek, dan ada momen yang bikin kita harus belajar buat saling ngerti. tapi justru dari semua itu aku tau, yang bikin hubungan ini tetap berjalan bukan karena semuanya selalu mudah, melainkan karena kita sama-sama selalu berusaha memahami dan menjaga satu sama lain.
+
+website kecil ini mungkin cuma berhasil nyimpen sebagian kecil dari perjalanan kita. masih banyak momen yang belum sempat masuk, banyak obrolan yang cuma kita yang tau, dan masih banyak cerita lain yang semoga bisa terus kita tulis bersama setelah ini.
+
+aku ngga tau akan seperti apa perjalanan kita ke depannya. tapi aku berharap, apa pun yang nanti kita hadapi, kita tetap bisa saling menggenggam, saling menguatkan, dan tetap memilih satu sama lain seperti yang kita lakukan sampai hari ini.
+
+buat aku, ini bukan halaman terakhir. ini cuma salah satu halaman yang berhasil kita tulis bersama. semoga setelah halaman ini, masih ada banyak cerita lain yang bisa kita tulis bersama. dan kalau suatu hari nanti kita membuka website ini lagi, semoga kita masih bisa saling senyum sambil bilang,
+
+"ternyata semuanya memang berawal dari sini."</div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-moment">
+  <div class="eyebrow">halaman favoritku</div>
+  <h2 class="heading">just you</h2>
+  <div class="camera-frame">
+    <div class="camera-housing">
+      <div class="camera-lug left"></div>
+      <div class="camera-lug right"></div>
+      <div class="camera-topplate">
+        <div class="camera-dial"></div>
+        <div class="camera-viewfinder-bump"></div>
+        <div class="camera-shutter-btn"></div>
+      </div>
+      <div class="camera-body">
+        <div class="camera-lens-ring">
+          <div class="lens-screw tl"></div>
+          <div class="lens-screw tr"></div>
+          <div class="lens-screw bl"></div>
+          <div class="lens-screw br"></div>
+          <div class="camera-lens" id="cameraLens">
+            <div class="photo-label" id="cameraPhotoLabel">ganti foto 1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="camera-caption-card">
+      <div class="camera-caption" id="cameraCaption">momen pertama</div>
+      <div class="camera-desc" id="cameraDesc">ceritain sedikit soal momen ini di sini.</div>
+    </div>
+    <div class="camera-nav">
+      <button class="camera-arrow" id="camPrev">‹</button>
+      <div class="camera-dots" id="cameraDots"></div>
+      <button class="camera-arrow" id="camNext">›</button>
+    </div>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-card">
+    <div class="lightbox-photo" id="lightboxPhoto"></div>
+    <div class="lightbox-cap" id="lightboxCap"></div>
+  </div>
+</div>
+
+<section class="view" id="view-playlist">
+  <div class="eyebrow">tentang kamu</div>
+  <h2 class="heading">playlist</h2>
+  <div class="playlist" id="playlist">
+    <div class="playlist-section">lagu kita</div>
+    <div class="track">
+      <div class="track-num">01</div>
+      <div class="track-info">
+        <div class="track-title">about you</div>
+        <div class="track-artist">the 1975</div>
+        <div class="track-desc">entah kenapa, lagu ini selalu terdengar sama, tapi rasanya ngga pernah benar-benar sama. mungkin karena setiap kali diputar, selalu ada cerita kita di dalamnya.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/backsound.mp3"></audio>
+    </div>
+    <div class="playlist-section">sering kita dengerin bareng</div>
+    <div class="track">
+      <div class="track-num">02</div>
+      <div class="track-info">
+        <div class="track-title">one only</div>
+        <div class="track-artist">pamungkas</div>
+        <div class="track-desc">ada beberapa lagu yang ngga cuma enak didengerin. lagu ini salah satunya, karena selalu nyimpen cerita tentang awal kita.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist2.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">03</div>
+      <div class="track-info">
+        <div class="track-title">everything u are</div>
+        <div class="track-artist">hindia</div>
+        <div class="track-desc">semuanya berawal dari lagu ini. pelan-pelan, kamu mulai kenal sama lagu-lagu yang selama ini selalu nemenin aku.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist3.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">04</div>
+      <div class="track-info">
+        <div class="track-title">kasih putih</div>
+        <div class="track-artist">glenn fredly</div>
+        <div class="track-desc">ngga ada alasan khusus. kita cuma sama-sama suka lagu ini, dan sampai sekarang masih sering kita dengerin.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist4.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">05</div>
+      <div class="track-info">
+        <div class="track-title">aku milikmu</div>
+        <div class="track-artist">dewa 19</div>
+        <div class="track-desc">awalnya cuma karena kita sama-sama suka intronya. lama-lama, lagunya juga ikut jadi salah satu yang paling sering kita puter.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist5.mp3"></audio>
+    </div>
+    <div class="playlist-section">favorit kamu dulu</div>
+    <div class="track">
+      <div class="track-num">06</div>
+      <div class="track-info">
+        <div class="track-title">monolog</div>
+        <div class="track-artist">pamungkas</div>
+        <div class="track-desc">aku selalu inget kalau dulu lagu ini sering ada di playlist kamu.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist6.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">07</div>
+      <div class="track-info">
+        <div class="track-title">if u could</div>
+        <div class="track-artist">arash buana & raissa anggiani</div>
+        <div class="track-desc">salah satu lagu yang sering nemenin hari-hari kamu waktu itu.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist7.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">08</div>
+      <div class="track-info">
+        <div class="track-title">meant 2 be</div>
+        <div class="track-artist">shakira jasmine & nuca</div>
+        <div class="track-desc">aku jadi kenal lagu ini karena kamu.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist8.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">09</div>
+      <div class="track-info">
+        <div class="track-title">atlantis</div>
+        <div class="track-artist">seafret</div>
+        <div class="track-desc">salah satu lagu favorit kamu dari dulu.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist9.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">10</div>
+      <div class="track-info">
+        <div class="track-title">pilihan yang terbaik</div>
+        <div class="track-artist">ziva magnolya</div>
+        <div class="track-desc">dari semua lagu yang kamu suka dulu, lagu ini termasuk yang paling sering aku denger.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist10.mp3"></audio>
+    </div>
+    <div class="playlist-section">favorit kamu sekarang</div>
+    <div class="track">
+      <div class="track-num">11</div>
+      <div class="track-info">
+        <div class="track-title">bernaung</div>
+        <div class="track-artist">feby putri</div>
+        <div class="track-desc">aku ngerti kenapa kamu suka lagu ini. memang seindah itu.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist11.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">12</div>
+      <div class="track-info">
+        <div class="track-title">berapa kali kita akan saling memaafkan</div>
+        <div class="track-artist">pamungkas</div>
+        <div class="track-desc">lagu yang rasanya enak didengerin tanpa harus mikir apa-apa.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist12.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">13</div>
+      <div class="track-info">
+        <div class="track-title">masa ini, nanti, dan masa indah lainnya</div>
+        <div class="track-artist">nuca</div>
+        <div class="track-desc">salah satu lagu yang sekarang sering kamu dengerin.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist13.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">14</div>
+      <div class="track-info">
+        <div class="track-title">honeybee</div>
+        <div class="track-artist">olivia rodrigo</div>
+        <div class="track-desc">salah satu lagu favorit kamu belakangan ini.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist14.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">15</div>
+      <div class="track-info">
+        <div class="track-title">2001</div>
+        <div class="track-artist">adrian khalif</div>
+        <div class="track-desc">lama-lama aku jadi hafal lagu ini, mungkin karena terlalu sering denger dari kamu.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist15.mp3"></audio>
+    </div>
+    <div class="track">
+      <div class="track-num">16</div>
+      <div class="track-info">
+        <div class="track-title">wals akhir zaman</div>
+        <div class="track-artist">rony parulian</div>
+        <div class="track-desc">gatau kenapa, tapi tiap denger lagu ini aku langsung kepikiran kamu.</div>
+        <div class="track-progress"><div class="track-progress-fill"></div><div class="track-progress-thumb"></div><div class="track-progress-tooltip">0:00</div></div>
+      </div>
+      <div class="track-time">0:00</div>
+      <button class="track-play">▶</button>
+      <audio src="music/playlist16.mp3"></audio>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-gift">
+  <div class="eyebrow">sebuah surat kecil</div>
+  <h2 class="heading">words for you</h2>
+  <div class="gift-photo-tag">
+    <div class="gpt-img" style="background:url('photos/foto-bulat.jpg') 44% 47%/280% no-repeat;"></div>
+  </div>
+  <div class="letter-card">
+    <p class="letter-text">hai aureliee,
+happy birthday yaa.
+
+semoga tahun ini banyak hal baik yang datang ke kamu. semoga kamu selalu sehat, selalu bahagia, dan semua yang lagi kamu usahain berjalan dengan lancar.
+
+makasih ya, udah hadir di hidupku. makasih juga karena selalu mau dengerin cerita-ceritaku, nemenin aku, dan bikin hari-hari yang biasa aja jadi jauh lebih seru. mungkin aku nggak sering bilang secara langsung, tapi aku beneran bersyukur bisa kenal dan punya kamu.
+
+website ini aku bikin pelan-pelan. mulai dari foto-fotonya, lagu-lagunya, sampai tulisan yang lagi kamu baca sekarang. semuanya aku pilih sambil kepikiran kamu. semoga waktu kamu buka satu per satu, kamu bisa senyum, walaupun cuma sebentar.
+
+aku juga ngerasa kita masih punya banyak cerita yang belum sempat dibuat. masih banyak tempat yang pengen kita datengin, lagu yang pengen kita dengerin di perjalanan, foto yang belum sempat kita ambil, dan kenangan yang belum sempat kita buat.
+
+sekali lagi...
+
+happy birthday ya, salzabilla aurelia maheswari.
+
+i love you.</p>
+    <div class="letter-sign">love, yudis. 🤍</div>
+  </div>
+
+  <div class="voice-note">
+    <span class="voice-note-icon">🎙️</span>
+    <div class="voice-note-info">
+      <div class="voice-note-label">dengerin suaraku juga yaa sayang</div>
+      <div class="voice-note-progress"><div class="voice-note-progress-fill" id="voiceFill"></div><div class="voice-note-progress-thumb"></div><div class="voice-note-progress-tooltip">0:00</div></div>
+      <div class="voice-note-time" id="voiceTime">0:00</div>
+    </div>
+    <button class="voice-note-play" id="voicePlay">▶</button>
+    <audio id="voiceAudio" src="music/voice-message.mp3"></audio>
+  </div>
+
+</section>
+
+<section class="view" id="view-film">
+  <div class="film-orn film-orn-1">✿</div>
+  <div class="film-orn film-orn-2">🦋</div>
+  <div class="film-orn film-orn-3">✦</div>
+  <div class="film-orn film-orn-4">✦</div>
+  <div class="eyebrow">a little movie</div>
+  <h2 class="heading">our film</h2>
+  <p class="lede">video kompilasi kecil, semoga jadi salah satu kado kecil yang berkesan.</p>
+  <div class="film-card">
+    <div class="film-frame">
+      <video controls playsinline preload="metadata">
+        <source src="video/our-film.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+  <p class="film-caption">a glimpse of our story ✿</p>
+</section>
+
+<section class="view" id="view-closing">
+  <div class="confetti-wrap" id="confettiWrap"></div>
+  <div class="closing-content">
+    <div class="closing-title">the end, for now. 🤍</div>
+    <p class="closing-msg" style="white-space:pre-line;">website ini memang selesai di halaman ini.
+tapi aku harap, cerita kita nggak berhenti sampai sini.</p>
+    <p class="closing-msg">semoga beberapa tahun lagi kita bisa buka website ini lagi. baca semuanya dari awal, senyum sendiri, terus sadar kalau ternyata masih banyak halaman baru yang berhasil kita tulis setelah hari ini.</p>
+    <p class="closing-msg">makasih ya, udah jadi bagian dari semua cerita kecil yang ada di website ini. dan semoga, apa pun yang nanti kita lewatin, kita tetap punya alasan buat pulang ke cerita yang sama.</p>
+    <div class="closing-credits">
+      <div class="line1">untuk aurelie.</div>
+      <div class="line2">- yudis</div>
+      <div class="line3">24 november 2026</div>
+    </div>
+    <button class="restart-btn" id="restartBtn">[ our story, again ]</button>
+  </div>
+</section>
+
+</div>
+
+<script>
+  const TOGETHER_START = new Date('2025-02-15');
+  (function(){
+    const el = document.getElementById('togetherCount');
+    if(!el) return;
+    const now = new Date();
+    let years = now.getFullYear() - TOGETHER_START.getFullYear();
+    let months = now.getMonth() - TOGETHER_START.getMonth();
+    let days = now.getDate() - TOGETHER_START.getDate();
+    if(days < 0){
+      months -= 1;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if(months < 0){ years -= 1; months += 12; }
+    const parts = [];
+    if(years > 0) parts.push(years + ' tahun');
+    if(months > 0) parts.push(months + ' bulan');
+    parts.push(days + ' hari');
+    el.textContent = parts.join(' ');
+  })();
+
+  document.querySelectorAll('.stars').forEach(wrap=>{
+    for(let i=0;i<30;i++){
+      const s = document.createElement('span');
+      s.style.left = Math.random()*100+'%';
+      s.style.top = Math.random()*100+'%';
+      s.style.animationDelay = (Math.random()*3)+'s';
+      wrap.appendChild(s);
+    }
+  });
+
+  const confettiWrap = document.getElementById('confettiWrap');
+  if(confettiWrap){
+    const confettiColors = ['#faf3e8', '#e8b4bc', '#8c4a5c'];
+    for(let i=0;i<9;i++){
+      const p = document.createElement('div');
+      p.className = 'confetti-piece';
+      const size = 5 + Math.random()*4;
+      p.style.left = Math.random()*100+'%';
+      p.style.width = size+'px';
+      p.style.height = size+'px';
+      p.style.borderRadius = '50%';
+      p.style.background = confettiColors[Math.floor(Math.random()*confettiColors.length)];
+      p.style.opacity = 0.25 + Math.random()*0.25;
+      p.style.animationDuration = (13 + Math.random()*8)+'s';
+      p.style.animationDelay = (Math.random()*8)+'s';
+      confettiWrap.appendChild(p);
+    }
+  }
+
+  const views = document.querySelectorAll('.view');
+  const backBtn = document.getElementById('backBtn');
+  const brandText = document.getElementById('brandText');
+  const topbarEl = document.querySelector('.topbar');
+
+  views.forEach(v=>{
+    v.addEventListener('scroll', ()=>{
+      if(v.scrollTop > 30){ topbarEl.classList.add('topbar-hidden'); }
+      else { topbarEl.classList.remove('topbar-hidden'); }
+    });
+  });
+
+  const SUBTITLES = {
+    'view-reveal': 'specially for you ✿',
+    'view-menu': 'specially for you ✿',
+    'view-journey': 'our story ✿',
+    'view-moment': 'just you ✿',
+    'view-playlist': 'songs for you ✿',
+    'view-gift': 'words from my heart ✿',
+    'view-closing': 'with love ✿',
+    'view-film': 'our film 🎬'
+  };
+
+  function showView(id){
+    views.forEach(v=> v.classList.remove('active'));
+    const target = document.getElementById(id);
+    target.classList.add('active');
+    target.scrollTop = 0;
+    topbarEl.classList.remove('topbar-hidden');
+    backBtn.classList.toggle('show', id !== 'view-cover');
+    brandText.style.visibility = (id === 'view-cover') ? 'hidden' : 'visible';
+    brandText.textContent = SUBTITLES[id] || 'specially for you ✿';
+    document.querySelectorAll('#playlist audio').forEach(a=>{ if(id!=='view-playlist'){ a.pause(); } });
+    document.querySelectorAll('.track').forEach(t=>t.classList.remove('playing'));
+    document.querySelectorAll('.track-play').forEach(b=>b.textContent='▶');
+    if(id !== 'view-playlist' && typeof resumeBgMusicIfNeeded === 'function'){ resumeBgMusicIfNeeded(); }
+    if(id !== 'view-gift'){
+      const va = document.getElementById('voiceAudio');
+      const vp = document.getElementById('voicePlay');
+      if(va){ va.pause(); }
+      if(vp){ vp.classList.remove('playing'); vp.textContent = '▶'; }
+      if(bgMusic){ fadeBgVolume(0.6, 300); }
+    }
+    if(id !== 'view-film'){
+      const fv = document.querySelector('.film-frame video');
+      if(fv){ fv.pause(); }
+    }
+  }
+
+  const BACK_MAP = {
+    'view-reveal': 'view-cover',
+    'view-menu': 'view-reveal',
+    'view-journey': 'view-menu',
+    'view-moment': 'view-menu',
+    'view-playlist': 'view-menu',
+    'view-gift': 'view-menu',
+    'view-closing': 'view-menu',
+    'view-film': 'view-menu'
+  };
+
+  function goToCoverAndClose(){
+    showView('view-cover');
+    setTimeout(()=>{ envelope.classList.remove('open'); }, 550);
+  }
+
+  backBtn.addEventListener('click', ()=>{
+    const current = document.querySelector('.view.active').id;
+    const target = BACK_MAP[current] || 'view-cover';
+    if(target === 'view-cover'){
+      goToCoverAndClose();
+    } else {
+      showView(target);
+    }
+  });
+
+  const envelope = document.getElementById('envelope');
+  const pressSub = document.getElementById('pressSub');
+  const continueBtn = document.getElementById('continueBtn');
+  const bgMusic = document.getElementById('bgMusic');
+  let bgMusicPausedByTrack = false;
+  const muteBtn = document.getElementById('muteBtn');
+  function openEnvelope(){
+    if(envelope.classList.contains('open')) return;
+    envelope.classList.add('open');
+    if(bgMusic && bgMusic.querySelector('source').src){
+      ensureBgGraph();
+      if(bgGainNode){ bgGainNode.gain.value = 0.6; } else { bgMusic.volume = 0.6; }
+      bgMusic.play().catch(()=>{ /* browser blocked autoplay, user can tap the mute icon to start it manually */ });
+    }
+    setTimeout(()=> showView('view-reveal'), 1500);
+  }
+  envelope.addEventListener('click', openEnvelope);
+  pressSub.addEventListener('click', openEnvelope);
+  continueBtn.addEventListener('click', ()=> showView('view-menu'));
+
+  muteBtn.addEventListener('click', ()=>{
+    if(!bgMusic) return;
+    bgMusic.muted = !bgMusic.muted;
+    muteBtn.textContent = bgMusic.muted ? '🔇' : '🔊';
+    if(!bgMusic.muted && bgMusic.paused && bgMusic.querySelector('source').src){
+      bgMusic.play().catch(()=>{});
+    }
+  });
+
+  document.querySelectorAll('.menu-card').forEach(card=>{
+    card.addEventListener('click', ()=> showView(card.dataset.target));
+  });
+
+  const restartBtn = document.getElementById('restartBtn');
+  if(restartBtn){ restartBtn.addEventListener('click', goToCoverAndClose); }
+
+  document.querySelectorAll('.tl-item').forEach(item=>{
+    const header = item.querySelector('.tl-header');
+    header.addEventListener('click', ()=>{
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.tl-item').forEach(i=> i.classList.remove('open'));
+      if(!isOpen){ item.classList.add('open'); }
+    });
+  });
+
+  const MOMENTS = [
+    { label: '', cap: 'the way i see you', desc: 'setiap lihat foto ini, aku selalu berhenti lebih lama.', img: 'photos/moment1.jpg', pos: 'center', size: 'cover' },
+    { label: '', cap: 'this one', desc: 'foto ini selalu punya alasan buat bikin senyum.', img: 'photos/moment2.jpg', pos: 'center', size: 'cover' },
+    { label: '', cap: 'effortlessly you', desc: 'aku suka kamu yang nggak lagi berusaha jadi siapa-siapa, cukup jadi diri sendiri aja.', img: 'photos/moment3.jpg', pos: 'center', size: 'cover' },
+    { label: '', cap: 'one day', desc: 'waktu lihat foto ini, aku cuma kepikiran satu hal. semoga lain kali aku ada di sebelah kamu di tempat yang sama.', img: 'photos/moment4.jpg', pos: 'center', size: 'cover' },
+    { label: '', cap: 'in bloom', desc: 'salah satu foto yang selalu buat aku bersyukur punya kamu.', img: 'photos/moment5.jpg', pos: 'center', size: 'cover' },
+    { label: '', cap: 'still my favorite', desc: 'dari semua foto yang aku simpan, yang ini masih jadi salah satu favoritku.', img: 'photos/moment6.jpg', pos: 'center', size: 'cover' }
+  ];
+  let momentIndex = 0;
+  const cameraLens = document.getElementById('cameraLens');
+  const cameraPhotoLabel = document.getElementById('cameraPhotoLabel');
+  const cameraCaption = document.getElementById('cameraCaption');
+  const cameraDesc = document.getElementById('cameraDesc');
+  const cameraDots = document.getElementById('cameraDots');
+  const camPrev = document.getElementById('camPrev');
+  const camNext = document.getElementById('camNext');
+
+  MOMENTS.forEach((_, i)=>{
+    const dot = document.createElement('div');
+    dot.className = 'camera-dot' + (i===0 ? ' active' : '');
+    dot.addEventListener('click', ()=>{ momentIndex = i; renderMoment(); });
+    cameraDots.appendChild(dot);
+  });
+
+  function renderMoment(){
+    const m = MOMENTS[momentIndex];
+    if(m.img){
+      cameraPhotoLabel.style.display = 'none';
+      cameraLens.style.backgroundImage = `url('${m.img}')`;
+      cameraLens.style.backgroundSize = m.size || 'cover';
+      cameraLens.style.backgroundPosition = m.pos || 'center';
+    } else {
+      cameraPhotoLabel.style.display = '';
+      cameraPhotoLabel.textContent = m.label;
+      cameraLens.style.backgroundImage = 'none';
+    }
+    cameraCaption.textContent = m.cap;
+    cameraDesc.textContent = m.desc || '';
+    cameraDots.querySelectorAll('.camera-dot').forEach((d,i)=> d.classList.toggle('active', i===momentIndex));
+  }
+  camPrev.addEventListener('click', ()=>{ momentIndex = (momentIndex - 1 + MOMENTS.length) % MOMENTS.length; renderMoment(); });
+  camNext.addEventListener('click', ()=>{ momentIndex = (momentIndex + 1) % MOMENTS.length; renderMoment(); });
+  renderMoment();
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxPhoto = document.getElementById('lightboxPhoto');
+  const lightboxCap = document.getElementById('lightboxCap');
+  cameraLens.addEventListener('click', ()=>{
+    const m = MOMENTS[momentIndex];
+    if(m.img){
+      lightboxPhoto.innerHTML = '';
+      lightboxPhoto.style.background = `url('${m.img}') ${m.pos || 'center'}/${m.size || 'cover'} no-repeat`;
+    } else {
+      lightboxPhoto.innerHTML = m.label;
+      lightboxPhoto.style.background = getComputedStyle(cameraLens).background;
+    }
+    lightboxCap.textContent = m.cap;
+    lightbox.classList.add('show');
+  });
+  lightbox.addEventListener('click', ()=> lightbox.classList.remove('show'));
+
+  function formatTime(sec){
+    if(!isFinite(sec) || isNaN(sec)) return '0:00';
+    const m = Math.floor(sec/60);
+    const s = Math.floor(sec%60).toString().padStart(2,'0');
+    return m+':'+s;
+  }
+  // pelan-pelan ubah volume audio, bukan langsung patah
+  function fadeVolume(audio, target, duration){
+    if(!audio) return;
+    duration = duration || 500;
+    const start = audio.volume;
+    const startTime = performance.now();
+    if(audio._fadeRaf) cancelAnimationFrame(audio._fadeRaf);
+    function step(now){
+      const t = Math.min(1, (now - startTime) / duration);
+      audio.volume = start + (target - start) * t;
+      if(t < 1){ audio._fadeRaf = requestAnimationFrame(step); }
+    }
+    audio._fadeRaf = requestAnimationFrame(step);
+  }
+  // di iOS Safari, audio.volume via JS diabaikan browser (cuma bisa diatur tombol fisik).
+  // route bgMusic lewat Web Audio GainNode biar kontrol volumenya beneran ngaruh di semua device.
+  let bgAudioCtx = null, bgGainNode = null, bgGraphReady = false;
+  function ensureBgGraph(){
+    if(bgGraphReady) return;
+    bgGraphReady = true;
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      bgAudioCtx = new AudioCtx();
+      const source = bgAudioCtx.createMediaElementSource(bgMusic);
+      bgGainNode = bgAudioCtx.createGain();
+      bgGainNode.gain.value = 0.6;
+      source.connect(bgGainNode).connect(bgAudioCtx.destination);
+      if(bgAudioCtx.state === 'suspended'){ bgAudioCtx.resume(); }
+    }catch(e){ bgGainNode = null; /* browser lama, fallback ke audio.volume biasa */ }
+  }
+  function fadeBgVolume(target, duration){
+    duration = duration || 500;
+    ensureBgGraph();
+    if(bgGainNode){
+      const start = bgGainNode.gain.value;
+      const startTime = performance.now();
+      if(bgGainNode._fadeRaf) cancelAnimationFrame(bgGainNode._fadeRaf);
+      function step(now){
+        const t = Math.min(1, (now - startTime) / duration);
+        bgGainNode.gain.value = start + (target - start) * t;
+        if(t < 1){ bgGainNode._fadeRaf = requestAnimationFrame(step); }
+      }
+      bgGainNode._fadeRaf = requestAnimationFrame(step);
+    } else {
+      fadeVolume(bgMusic, target, duration);
+    }
+  }
+  function resumeBgMusicIfNeeded(){
+    if(bgMusicPausedByTrack && bgMusic && bgMusic.querySelector('source').src){
+      bgMusic.play().catch(()=>{});
+      bgMusicPausedByTrack = false;
+    }
+  }
+
+  function setupSeekBar(bar, audio, fill, getDuration){
+    const thumb = bar.querySelector('.track-progress-thumb, .voice-note-progress-thumb');
+    const tooltip = bar.querySelector('.track-progress-tooltip, .voice-note-progress-tooltip');
+    let dragging = false;
+
+    function ratioFromEvent(e){
+      const rect = bar.getBoundingClientRect();
+      return Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    }
+    function paint(ratio){
+      const pct = (ratio*100)+'%';
+      fill.style.width = pct;
+      if(thumb) thumb.style.left = pct;
+      if(tooltip){
+        tooltip.style.left = pct;
+        tooltip.textContent = formatTime(ratio * (getDuration() || 0));
+      }
+    }
+    bar.addEventListener('pointerdown', (e)=>{
+      if(!getDuration()) return;
+      dragging = true;
+      bar.classList.add('dragging');
+      bar.setPointerCapture(e.pointerId);
+      paint(ratioFromEvent(e));
+    });
+    bar.addEventListener('pointermove', (e)=>{
+      if(!dragging) return;
+      paint(ratioFromEvent(e));
+    });
+    function endDrag(e){
+      if(!dragging) return;
+      dragging = false;
+      bar.classList.remove('dragging');
+      audio.currentTime = ratioFromEvent(e) * getDuration();
+    }
+    bar.addEventListener('pointerup', endDrag);
+    bar.addEventListener('pointercancel', ()=>{ dragging = false; bar.classList.remove('dragging'); });
+  }
+
+  document.querySelectorAll('.track').forEach(track=>{
+    const btn = track.querySelector('.track-play');
+    const audio = track.querySelector('audio');
+    const fill = track.querySelector('.track-progress-fill');
+    const bar = track.querySelector('.track-progress');
+    const timeEl = track.querySelector('.track-time');
+
+    audio.addEventListener('loadedmetadata', ()=>{ timeEl.textContent = formatTime(audio.duration); });
+    audio.addEventListener('timeupdate', ()=>{
+      if(audio.duration){
+        const pct = (audio.currentTime/audio.duration*100)+'%';
+        fill.style.width = pct;
+        const thumb = bar.querySelector('.track-progress-thumb');
+        if(thumb) thumb.style.left = pct;
+      }
+      timeEl.textContent = formatTime(audio.duration - audio.currentTime);
+    });
+    audio.addEventListener('ended', ()=>{
+      track.classList.remove('playing');
+      btn.textContent = '▶';
+      fill.style.width = '0%';
+      audio.currentTime = 0;
+      const thumb = bar.querySelector('.track-progress-thumb');
+      if(thumb) thumb.style.left = '0%';
+      resumeBgMusicIfNeeded();
+    });
+    setupSeekBar(bar, audio, fill, ()=> audio.duration);
+
+    btn.addEventListener('click', ()=>{
+      const isPlaying = track.classList.contains('playing');
+      document.querySelectorAll('.track').forEach(t=>{
+        t.classList.remove('playing');
+        t.querySelector('audio').pause();
+        t.querySelector('.track-play').textContent = '▶';
+      });
+      if(!isPlaying){
+        if(bgMusic && !bgMusic.paused){
+          bgMusic.pause();
+          bgMusicPausedByTrack = true;
+        }
+        if(audio.src){ audio.play(); }
+        track.classList.add('playing');
+        btn.textContent = '❚❚';
+      } else {
+        resumeBgMusicIfNeeded();
+      }
+    });
+  });
+
+  const voiceAudio = document.getElementById('voiceAudio');
+  const voicePlay = document.getElementById('voicePlay');
+  const voiceFill = document.getElementById('voiceFill');
+  const voiceBar = document.querySelector('.voice-note-progress');
+  const voiceTime = document.getElementById('voiceTime');
+  // boost volume VN lebih dari 100% (batas normal audio HTML), soalnya rekamannya pelan
+  let voiceBoostSetup = false;
+  function setupVoiceBoost(){
+    if(voiceBoostSetup) return;
+    voiceBoostSetup = true;
+    try{
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      const ctx = new AudioCtx();
+      const source = ctx.createMediaElementSource(voiceAudio);
+      const gainNode = ctx.createGain();
+      gainNode.gain.value = 2.2; // sekitar 2.2x lebih kenceng dari volume normal
+      source.connect(gainNode).connect(ctx.destination);
+      if(ctx.state === 'suspended'){ ctx.resume(); }
+    }catch(e){ /* kalau browser ngga support, biarin main normal aja */ }
+  }
+  if(voiceAudio && voicePlay){
+    voiceAudio.addEventListener('loadedmetadata', ()=>{ voiceTime.textContent = formatTime(voiceAudio.duration); });
+    voiceAudio.addEventListener('timeupdate', ()=>{
+      if(voiceAudio.duration){
+        const pct = (voiceAudio.currentTime/voiceAudio.duration*100)+'%';
+        voiceFill.style.width = pct;
+        const vThumb = voiceBar ? voiceBar.querySelector('.voice-note-progress-thumb') : null;
+        if(vThumb) vThumb.style.left = pct;
+      }
+      voiceTime.textContent = formatTime(voiceAudio.duration - voiceAudio.currentTime);
+    });
+    if(voiceBar){ setupSeekBar(voiceBar, voiceAudio, voiceFill, ()=> voiceAudio.duration); }
+    voiceAudio.addEventListener('ended', ()=>{
+      voicePlay.classList.remove('playing');
+      voicePlay.textContent = '▶';
+      voiceFill.style.width = '0%';
+      voiceAudio.currentTime = 0;
+      const vThumb = voiceBar ? voiceBar.querySelector('.voice-note-progress-thumb') : null;
+      if(vThumb) vThumb.style.left = '0%';
+      fadeBgVolume(0.6, 600);
+    });
+    voicePlay.addEventListener('click', ()=>{
+      if(!voiceAudio.src) return;
+      setupVoiceBoost();
+      if(voiceAudio.paused){
+        voiceAudio.play();
+        voicePlay.classList.add('playing');
+        voicePlay.textContent = '❚❚';
+        if(bgMusic && !bgMusic.paused){ fadeBgVolume(0.08, 600); }
+      } else {
+        voiceAudio.pause();
+        voicePlay.classList.remove('playing');
+        voicePlay.textContent = '▶';
+        fadeBgVolume(0.6, 600);
+      }
+    });
+  }
+
+  const filmVideo = document.querySelector('.film-frame video');
+  if(filmVideo){
+    filmVideo.addEventListener('play', ()=>{
+      fadeBgVolume(0, 300);
+    });
+    filmVideo.addEventListener('pause', ()=>{
+      if(bgMusic){
+        fadeBgVolume(0.6, 300);
+        if(bgMusic.paused && bgMusic.querySelector('source').src){ bgMusic.play().catch(()=>{}); }
+      }
+    });
+    filmVideo.addEventListener('ended', ()=>{
+      if(bgMusic){
+        fadeBgVolume(0.6, 300);
+        if(bgMusic.paused && bgMusic.querySelector('source').src){ bgMusic.play().catch(()=>{}); }
+      }
+    });
+  }
+
+  if(filmVideo){
+    filmVideo.addEventListener('fullscreenchange', ()=>{});
+    function tryLockLandscape(){
+      if(screen.orientation && screen.orientation.lock){
+        screen.orientation.lock('landscape').catch(()=>{ /* sebagian browser/HP ngga izinin, ngga masalah */ });
+      }
+    }
+    function tryUnlockOrientation(){
+      if(screen.orientation && screen.orientation.unlock){
+        try{ screen.orientation.unlock(); }catch(e){}
+      }
+    }
+    document.addEventListener('fullscreenchange', ()=>{
+      if(document.fullscreenElement === filmVideo){ tryLockLandscape(); }
+      else{ tryUnlockOrientation(); }
+    });
+    document.addEventListener('webkitfullscreenchange', ()=>{
+      if(document.webkitFullscreenElement === filmVideo){ tryLockLandscape(); }
+      else{ tryUnlockOrientation(); }
+    });
+    filmVideo.addEventListener('webkitbeginfullscreen', tryLockLandscape);
+    filmVideo.addEventListener('webkitendfullscreen', tryUnlockOrientation);
+  }
+</script>
+
+</body>
+</html>
